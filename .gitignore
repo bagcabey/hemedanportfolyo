@@ -1,0 +1,12 @@
+# Vercel
+.vercel
+
+# İşletim sistemi
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editör / araçlar
+.vscode/
+.idea/
+node_modules/

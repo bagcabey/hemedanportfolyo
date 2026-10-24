@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://www.ALANADI.com.tr/</loc>
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <image:image><image:loc>https://www.ALANADI.com.tr/assets/img/og-image.jpg</image:loc></image:image>
+    <image:image><image:loc>https://www.ALANADI.com.tr/assets/img/saliha-900.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.ALANADI.com.tr/assets/img/tunel-ve-ayna-960.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.ALANADI.com.tr/assets/img/alfred-900.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.ALANADI.com.tr/assets/img/yapay-zeka-cagi-900.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.ALANADI.com.tr/assets/img/kadim-devlet-900.webp</image:loc></image:image>
+  </url>
+</urlset>
