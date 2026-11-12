@@ -84,27 +84,84 @@ figcaption{font-size:13px;color:var(--muted);margin-top:8px}
   .main-nav a:last-child{border-bottom:0}
 }
 
-/* ---------- Giriş (dönen kitap yelpazesi) ---------- */
+/* ---------- Giriş (Editör Bakış — Canlı Redaksiyon Masası) ---------- */
 .hero{padding-top:28px;overflow:hidden;display:flex;flex-direction:column;gap:20px}
 .hero-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 48px;font-size:14px}
 .hero-role{font-weight:600}
 .hero-lead{max-width:440px;color:var(--ink-2)}
-.stage{--pw:clamp(130px,19vw,265px);height:calc(var(--pw)*1.47 + 140px);display:flex;align-items:center;justify-content:center;perspective:1700px;perspective-origin:50% 40%;
-  opacity:calc(1 - var(--past,0) * 1.1);transform:translateY(calc(var(--past,0) * 140px)) scale(calc(1 - var(--past,0) * .22))}
-.fan{position:relative;width:0;height:calc(var(--pw)*1.47);transform-style:preserve-3d;animation:fanspin 36s linear infinite;transform:rotateX(-8deg);will-change:transform}
-.pg{position:absolute;left:0;top:0;width:var(--pw);height:100%;transform-origin:0 50%;overflow:hidden;box-shadow:0 18px 40px rgba(17,17,17,.22);background:#ddd;display:block;cursor:zoom-in}
-.pg img{width:100%;height:100%;object-fit:cover;transition:filter .3s}
-a.pg:hover img,a.pg:focus-visible img{filter:brightness(1.08)}
-.pg:nth-child(1){transform:rotateY(0deg)}.pg:nth-child(2){transform:rotateY(30deg)}.pg:nth-child(3){transform:rotateY(60deg)}
-.pg:nth-child(4){transform:rotateY(90deg)}.pg:nth-child(5){transform:rotateY(120deg)}.pg:nth-child(6){transform:rotateY(150deg)}
-.pg:nth-child(7){transform:rotateY(180deg)}.pg:nth-child(8){transform:rotateY(210deg)}.pg:nth-child(9){transform:rotateY(240deg)}
-.pg:nth-child(10){transform:rotateY(270deg)}.pg:nth-child(11){transform:rotateY(300deg)}.pg:nth-child(12){transform:rotateY(330deg)}
-.pg--red{background:var(--accent);color:var(--on-dark);display:flex;flex-direction:column;justify-content:space-between;padding:clamp(14px,2vw,22px);cursor:default}
-.pg--ink{background:var(--ink);color:var(--on-dark);display:flex;align-items:flex-end;padding:clamp(14px,2vw,22px);cursor:default}
-.pg-eb{font-family:var(--serif);font-size:clamp(40px,5vw,64px);line-height:.8}
-.pg-label{font-weight:600;font-size:clamp(10px,1vw,13px);letter-spacing:.14em}
-.pg-quote{font-family:var(--serif);font-style:italic;font-size:clamp(17px,1.8vw,24px);line-height:1.15}
-@keyframes fanspin{from{transform:rotateX(-8deg) rotateY(0)}to{transform:rotateX(-8deg) rotateY(360deg)}}
+.stage{position:relative;min-height:clamp(350px,46vw,470px);display:flex;align-items:center;justify-content:center;padding-block:clamp(12px,2vw,28px);perspective:1600px;
+  opacity:calc(1 - var(--past,0) * 1.1);transform:translateY(calc(var(--past,0) * 120px)) scale(calc(1 - var(--past,0) * .16))}
+.ed-float{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.ed-glyph{position:absolute;font-family:var(--serif);color:var(--accent);opacity:.16;font-size:clamp(34px,5vw,76px);line-height:1;user-select:none;animation:ed-drift 11s ease-in-out infinite}
+.ed-glyph--1{top:8%;left:6%;animation-delay:0s}
+.ed-glyph--2{top:14%;right:8%;font-style:italic;animation-delay:-3s}
+.ed-glyph--3{bottom:14%;left:11%;color:var(--ink);opacity:.1;animation-delay:-6s}
+.ed-glyph--4{bottom:10%;right:12%;animation-delay:-8.5s}
+@keyframes ed-drift{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-14px) rotate(4deg)}}
+
+.ed-desk{position:relative;width:min(100%,860px);z-index:2;transform-style:preserve-3d}
+.ed-sheet{position:relative;overflow:hidden;background:
+  radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(200,49,43,.065), transparent 44%),
+  repeating-linear-gradient(to bottom, transparent 0 39px, rgba(17,17,17,.035) 39px 40px),
+  var(--paper);
+  border:1px solid var(--line);
+  box-shadow:0 28px 65px -20px rgba(17,17,17,.16), 0 2px 0 var(--paper), 0 8px 0 -2px #EAE6DE, 0 9px 0 -2px var(--line);
+  padding:clamp(18px,3vw,34px);
+  display:flex;flex-direction:column;gap:clamp(18px,2.4vw,26px);
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform .35s var(--ease), box-shadow .4s var(--ease);
+  cursor:pointer}
+.ed-sheet::before{content:"";position:absolute;top:0;bottom:0;left:clamp(16px,11%,108px);width:1px;background:rgba(200,49,43,.18);pointer-events:none}
+.ed-loupe{position:absolute;left:var(--mx,50%);top:var(--my,50%);width:180px;height:180px;border-radius:50%;transform:translate(-50%,-50%);
+  border:1px solid rgba(200,49,43,.18);background:radial-gradient(circle, rgba(200,49,43,.05) 0%, transparent 70%);
+  pointer-events:none;opacity:0;transition:opacity .3s var(--ease)}
+.ed-sheet:hover .ed-loupe{opacity:1}
+
+.ed-head{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.ed-brand{display:flex;align-items:center;gap:10px}
+.ribbon--xs{width:18px;height:27px;font-size:12px;line-height:1;padding-top:3px}
+.ed-kicker{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.ed-status{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--bg);transition:all .45s var(--ease)}
+.ed-sheet[data-ed-state="sweep"] .ed-status{border-color:var(--accent);color:var(--accent);background:rgba(200,49,43,.07)}
+.ed-sheet[data-ed-state="clean"] .ed-status{border-color:var(--ink);color:var(--on-dark);background:var(--ink)}
+
+.ed-body{position:relative;z-index:1;display:grid;grid-template-columns:86px minmax(0,1fr);gap:18px;align-items:start;min-height:clamp(120px,14vw,156px)}
+.ed-margin{display:flex;flex-direction:column;gap:14px;padding-top:6px;font-size:12px;color:var(--accent)}
+.ed-note{font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.15;transform:rotate(-4deg);opacity:.9;transition:opacity .45s var(--ease), transform .45s var(--ease)}
+.ed-sheet[data-ed-state="clean"] .ed-note{opacity:.35;transform:rotate(-2deg)}
+.ed-seal{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--accent);border-radius:4px;color:var(--accent);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;width:fit-content;opacity:0;transform:scale(.82) rotate(-6deg);transition:opacity .45s var(--ease), transform .45s var(--ease)}
+.ed-seal span{font-family:var(--serif);font-size:15px;font-weight:400;text-transform:none;letter-spacing:0}
+.ed-sheet[data-ed-state="clean"] .ed-seal{opacity:1;transform:scale(1) rotate(-3deg)}
+
+.ed-quote{margin:0;font-family:var(--serif);font-size:clamp(24px,3.2vw,42px);line-height:1.28;letter-spacing:-.01em;color:var(--ink)}
+.ed-line{display:block}
+
+/* Düzelti imleri: taslakta görünür, süpürmede dönüşür, son hâlde temizlenir */
+.ed-del{position:relative;display:inline-block;color:var(--accent);opacity:.82;padding-inline:2px;max-width:22ch;overflow:hidden;vertical-align:bottom;white-space:nowrap;
+  transition:max-width .65s var(--ease), opacity .45s var(--ease), padding .65s var(--ease)}
+.ed-del::after{content:"";position:absolute;left:0;right:0;top:54%;height:2px;background:var(--accent);transform:scaleX(1);transform-origin:left;transition:transform .45s var(--ease)}
+.ed-sheet[data-ed-state="clean"] .ed-del{max-width:0;opacity:0;padding-inline:0}
+
+.ed-add{position:relative;display:inline-block;color:var(--accent);font-style:italic;padding-inline:3px;border-bottom:1.5px dashed rgba(200,49,43,.65);transition:color .55s var(--ease), border-color .55s var(--ease)}
+.ed-add::before{content:"^";position:absolute;left:-4px;bottom:-9px;font-family:var(--sans);font-style:normal;font-size:11px;font-weight:700;color:var(--accent);opacity:1;transition:opacity .4s var(--ease)}
+.ed-sheet[data-ed-state="clean"] .ed-add{color:var(--ink);border-bottom-color:transparent}
+.ed-sheet[data-ed-state="clean"] .ed-add::before{opacity:0}
+.ed-sheet[data-ed-state="clean"] .ed-add--em{color:var(--accent)}
+
+.ed-mark{display:inline-block;color:var(--accent);font-weight:600;transform:scale(1.18);transition:color .5s var(--ease), transform .5s var(--ease)}
+.ed-sheet[data-ed-state="clean"] .ed-mark{color:var(--ink);transform:scale(1)}
+
+.ed-foot{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-top:14px;border-top:1px solid var(--line)}
+.ed-tabs{display:flex;flex-wrap:wrap;gap:8px}
+.ed-tab{appearance:none;background:var(--bg);border:1px solid var(--line);color:var(--ink-2);font:500 12px var(--sans);letter-spacing:.03em;padding:7px 13px;border-radius:999px;cursor:pointer;transition:all .25s var(--ease)}
+.ed-tab:hover{border-color:var(--ink);color:var(--ink)}
+.ed-tab.is-active{background:var(--ink);border-color:var(--ink);color:var(--on-dark)}
+.ed-hint{font-size:12px;color:var(--muted)}
+
+.ed-sweep{position:absolute;top:0;bottom:0;left:-18%;width:16%;background:linear-gradient(90deg, transparent, rgba(200,49,43,.16), transparent);pointer-events:none;opacity:0}
+.ed-sheet[data-ed-state="sweep"] .ed-sweep{animation:ed-sweep 1s var(--ease) forwards}
+@keyframes ed-sweep{0%{left:-18%;opacity:0}25%{opacity:1}100%{left:108%;opacity:0}}
+
 .hero-name{font-weight:600;font-size:clamp(40px,11.6vw,186px);line-height:.9;letter-spacing:-.045em;white-space:nowrap;text-align:center;margin-bottom:-.08em;transform:translateY(calc(var(--past,0) * 60px))}
 .hero-name .wd{display:inline-block;white-space:nowrap}
 .hero-name .ch{display:inline-block}
@@ -112,7 +169,10 @@ a.pg:hover img,a.pg:focus-visible img{filter:brightness(1.08)}
 @keyframes letter{from{opacity:0;transform:translateY(.6em) rotate(8deg)}to{opacity:1;transform:none}}
 @media (max-width:640px){
   .hero-name{white-space:normal;font-size:19vw;line-height:.88;margin-bottom:.1em}
-  .pg{box-shadow:none;outline:1px solid rgba(17,17,17,.08)}
+  .ed-sheet::before{display:none}
+  .ed-body{grid-template-columns:1fr;gap:10px}
+  .ed-margin{flex-direction:row;align-items:center;justify-content:space-between;padding-top:0}
+  .ed-hint{display:none}
 }
 
 /* ---------- Çapraz bantlar ---------- */
@@ -160,6 +220,10 @@ a.pg:hover img,a.pg:focus-visible img{filter:brightness(1.08)}
 .zoom-box:hover img{transform:scale(1.05)}
 .photo-note{margin-top:14px;font-size:15px;line-height:1.5;color:var(--ink-2);max-width:42ch}
 .photo-note__q{display:block;font-family:var(--serif);font-style:italic;font-size:22px;line-height:1.25;color:var(--ink);margin-bottom:6px}
+.desk-thumbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
+.desk-thumbs a{display:block;overflow:hidden;border:1px solid var(--line);cursor:zoom-in}
+.desk-thumbs img{width:100%;aspect-ratio:4/5;object-fit:cover;transition:transform .5s var(--ease)}
+.desk-thumbs a:hover img{transform:scale(1.06)}
 @media (max-width:760px){.trio{grid-template-columns:1fr}.trio-text{padding:8px 0}}
 
 /* ---------- Bölüm 2: ikiye ayrılan kapılar ---------- */
@@ -316,7 +380,7 @@ a.pg:hover img,a.pg:focus-visible img{filter:brightness(1.08)}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .intro{display:none}
-  .fan,.tape-track{animation:none}
+  .ed-glyph,.tape-track{animation:none}
   .fx .hero-name .ch{animation:none}
 }
 
