@@ -131,44 +131,37 @@
     <p class="hero-role">Meliha Hemedan — Kitap Editörü</p>
     <p class="hero-lead">Heyecanla gönderilmiş dosyaların ilk okuyanı. Redaksiyon, içerik editörlüğü ve kapak görseli; tırtılla vedalaşıp kelebeği beklemeye kadar.</p>
   </div>
-  <div class="stage ed-stage" role="region" aria-label="Editör Bakış — etkileşimli redaksiyon masası">
-    <div class="ed-float" aria-hidden="true">
-      <span class="ed-glyph ed-glyph--1">¶</span>
-      <span class="ed-glyph ed-glyph--2">“ ”</span>
-      <span class="ed-glyph ed-glyph--3">—</span>
-      <span class="ed-glyph ed-glyph--4">^</span>
-    </div>
-    <div class="ed-desk" data-ed-desk>
-      <div class="ed-sheet" data-ed-state="draft">
-        <div class="ed-loupe" aria-hidden="true"></div>
-        <header class="ed-head">
-          <div class="ed-brand">
-            <span class="ribbon ribbon--xs" aria-hidden="true"><span>eb</span></span>
-            <span class="ed-kicker">Editör Bakış · Redaksiyon Masası</span>
-          </div>
-          <span class="ed-status" data-ed-status aria-live="polite">İlk okuma</span>
-        </header>
-        <div class="ed-body">
-          <aside class="ed-margin" aria-hidden="true">
-            <span class="ed-note" data-ed-note>¶ ritim</span>
-            <span class="ed-seal"><span>eb</span><small>Baskıya hazır</small></span>
-          </aside>
-          <blockquote class="ed-quote" data-ed-quote>
-            <span class="ed-line">Her dosya yazarının <span class="ed-del">çok büyük</span><span class="ed-add">sessiz</span> bir heyecanıyla gelir<span class="ed-mark">;</span></span>
-            <span class="ed-line">editörün işi <span class="ed-del">değiştirmek değil,</span><span class="ed-add">fazlalığı alıp</span> kendi sesini <span class="ed-add ed-add--em">duyurmaktır.</span></span>
-          </blockquote>
+  <div class="stage aw-stage" role="region" aria-label="Editör Bakış — etkileşimli editoryal sahne">
+    <canvas class="aw-canvas" aria-hidden="true"></canvas>
+    <div class="aw-grid">
+      <div class="aw-meta">
+        <span class="aw-index">01 / EDİTÖR BAKIŞ</span>
+        <span class="aw-rule" aria-hidden="true"></span>
+        <span class="aw-coords">REDAKSİYON · GELİŞİM · KAPAK</span>
+      </div>
+
+      <div class="aw-center">
+        <p class="aw-kicker" aria-hidden="true">İlk okuyandan son baskıya</p>
+        <div class="aw-headline">
+          <span class="aw-mask"><span>İyi bir kitap,</span></span>
+          <span class="aw-mask"><span><em>editör izi</em> taşımayan</span></span>
+          <span class="aw-mask"><span>kitaptır.</span></span>
         </div>
-        <footer class="ed-foot">
-          <div class="ed-tabs" role="tablist" aria-label="Editöryal örnekler">
-            <button class="ed-tab is-active" type="button" role="tab" aria-selected="true" data-ed-tab="0">01 · Redaksiyon</button>
-            <button class="ed-tab" type="button" role="tab" aria-selected="false" data-ed-tab="1">02 · Ritim &amp; Düzelti</button>
-            <button class="ed-tab" type="button" role="tab" aria-selected="false" data-ed-tab="2">03 · Yazarın Sesi</button>
-          </div>
-          <span class="ed-hint">İncelemek için dokun veya bekle</span>
-        </footer>
-        <div class="ed-sweep" aria-hidden="true"></div>
+      </div>
+
+      <div class="aw-orbit" aria-hidden="true">
+        <svg class="aw-crest" viewBox="0 0 140 140" width="128" height="128">
+          <defs>
+            <path id="aw-circle" d="M 70, 70 m -50, 0 a 50,50 0 1,1 100,0 a 50,50 0 1,1 -100,0"/>
+          </defs>
+          <text class="aw-crest-text">
+            <textPath href="#aw-circle" startOffset="0%">EDİTÖR BAKIŞ · REDAKSİYON · İLK OKUYAN · </textPath>
+          </text>
+        </svg>
+        <span class="aw-crest-mark">eb</span>
       </div>
     </div>
+    <div class="aw-cursor" aria-hidden="true"></div>
   </div>
   <h1 class="hero-name split-letters" id="hero-baslik">Meliha Hemedan</h1>
 </section>

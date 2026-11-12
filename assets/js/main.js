@@ -168,109 +168,111 @@
     dlg.addEventListener("close", function () { img.removeAttribute("src"); if (opener) opener.focus({ preventScroll: true }); });
   }
 
-  /* ---------- Editör Bakış: Canlı Redaksiyon Masası ---------- */
-  var desk = document.querySelector("[data-ed-desk]");
-  if (desk) {
-    var sheet = desk.querySelector(".ed-sheet");
-    var quoteEl = desk.querySelector("[data-ed-quote]");
-    var statusEl = desk.querySelector("[data-ed-status]");
-    var noteEl = desk.querySelector("[data-ed-note]");
-    var tabs = Array.from(desk.querySelectorAll("[data-ed-tab]"));
-    var scenes = [
-      {
-        note: "¶ ritim",
-        lines: [
-          'Her dosya yazarının <span class="ed-del">çok büyük</span><span class="ed-add">sessiz</span> bir heyecanıyla gelir<span class="ed-mark">;</span>',
-          'editörün işi <span class="ed-del">değiştirmek değil,</span><span class="ed-add">fazlalığı alıp</span> kendi sesini <span class="ed-add ed-add--em">duyurmaktır.</span>'
-        ]
-      },
-      {
-        note: "¶ sadeleştir",
-        lines: [
-          'Devrilmiş cümleleri <span class="ed-del">yavaşça</span><span class="ed-add">yerinde</span> tutup kaldırmak<span class="ed-mark">,</span>',
-          'noktaya ve virgüle <span class="ed-del">aslında</span><span class="ed-add">sessizce</span> yerini <span class="ed-add ed-add--em">hatırlatmaktır.</span>'
-        ]
-      },
-      {
-        note: "¶ sesi koru",
-        lines: [
-          'İyi bir editörden <span class="ed-del">mutlaka</span><span class="ed-add">süzülüp</span> geçmiş kitap<span class="ed-mark">,</span>',
-          'okurun elinde <span class="ed-del">asla</span><span class="ed-add">hiç</span> editör izi <span class="ed-add ed-add--em">taşımayandır.</span>'
-        ]
-      }
-    ];
-    var current = 0, timers = [], paused = false;
+  /* ---------- Awwwards Akışkan Editöryal Kanvas & İmleç Fiziği ---------- */
+  var awStage = document.querySelector(".aw-stage");
+  var awCanvas = document.querySelector(".aw-canvas");
+  if (awStage && awCanvas && !reduce) {
+    var ctx = awCanvas.getContext("2d");
+    var w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var ptr = { x: 0.55, y: 0.45, tx: 0.55, ty: 0.45, active: false };
+    var t = 0;
 
-    function clearTimers() {
-      while (timers.length) clearTimeout(timers.pop());
-    }
-    function setState(state, label) {
-      sheet.setAttribute("data-ed-state", state);
-      if (statusEl) statusEl.textContent = label;
-    }
-    function renderScene(idx, instantClean) {
-      current = (idx + scenes.length) % scenes.length;
-      var sc = scenes[current];
-      tabs.forEach(function (t, i) {
-        var active = i === current;
-        t.classList.toggle("is-active", active);
-        t.setAttribute("aria-selected", active ? "true" : "false");
-      });
-      if (noteEl) noteEl.textContent = sc.note;
-      quoteEl.innerHTML = sc.lines.map(function (l) { return '<span class="ed-line">' + l + '</span>'; }).join("");
-      clearTimers();
-      if (instantClean || reduce) {
-        setState("clean", "Baskıya hazır");
-        return;
-      }
-      setState("draft", "İlk okuma");
-      timers.push(setTimeout(function () {
-        setState("sweep", "Redaksiyon");
-      }, 1500));
-      timers.push(setTimeout(function () {
-        setState("clean", "Baskıya hazır");
-      }, 2400));
-      timers.push(setTimeout(function () {
-        if (!paused) renderScene(current + 1, false);
-      }, 6400));
-    }
-
-    tabs.forEach(function (tab) {
-      tab.addEventListener("click", function (e) {
-        e.stopPropagation();
-        renderScene(parseInt(tab.getAttribute("data-ed-tab"), 10) || 0, false);
-      });
+    /* Yüzen editoryal mürekkep / sayfa parçacıkları */
+    var motes = Array.from({ length: 34 }, function (_, i) {
+      return {
+        x: Math.random(),
+        y: Math.random(),
+        r: 1.2 + (i % 4) * 0.7,
+        vx: (Math.random() - 0.5) * 0.00035,
+        vy: -0.00018 - Math.random() * 0.00028,
+        accent: i % 5 === 0
+      };
     });
 
-    sheet.addEventListener("click", function (e) {
-      if (e.target.closest("[data-ed-tab]")) return;
-      var st = sheet.getAttribute("data-ed-state");
-      if (st === "clean") renderScene(current + 1, false);
-      else {
-        clearTimers();
-        setState("clean", "Baskıya hazır");
-      }
-    });
-
-    if (!reduce) {
-      sheet.addEventListener("pointermove", function (e) {
-        var r = sheet.getBoundingClientRect();
-        var x = (e.clientX - r.left) / Math.max(1, r.width);
-        var y = (e.clientY - r.top) / Math.max(1, r.height);
-        sheet.style.setProperty("--mx", (x * 100).toFixed(1) + "%");
-        sheet.style.setProperty("--my", (y * 100).toFixed(1) + "%");
-        sheet.style.setProperty("--rx", ((0.5 - y) * 5).toFixed(2) + "deg");
-        sheet.style.setProperty("--ry", ((x - 0.5) * 6).toFixed(2) + "deg");
-      });
-      sheet.addEventListener("pointerleave", function () {
-        sheet.style.setProperty("--rx", "0deg");
-        sheet.style.setProperty("--ry", "0deg");
-        paused = false;
-      });
-      sheet.addEventListener("pointerenter", function () { paused = true; });
+    function resizeCanvas() {
+      var rect = awStage.getBoundingClientRect();
+      w = Math.max(1, rect.width);
+      h = Math.max(1, rect.height);
+      awCanvas.width = Math.round(w * dpr);
+      awCanvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    /* Açılış kapağı açıldıktan sonra ilk sahneyi başlat */
-    setTimeout(function () { renderScene(0, reduce); }, reduce ? 0 : 1700);
+    awStage.addEventListener("pointermove", function (e) {
+      var rect = awStage.getBoundingClientRect();
+      ptr.tx = (e.clientX - rect.left) / Math.max(1, rect.width);
+      ptr.ty = (e.clientY - rect.top) / Math.max(1, rect.height);
+      ptr.active = true;
+      awStage.style.setProperty("--cx", (ptr.tx * 100).toFixed(1) + "%");
+      awStage.style.setProperty("--cy", (ptr.ty * 100).toFixed(1) + "%");
+    });
+    awStage.addEventListener("pointerleave", function () { ptr.active = false; });
+
+    function drawRibbon(phase, yRatio, amp, alpha, color, width) {
+      ctx.beginPath();
+      var steps = 42;
+      for (var i = 0; i <= steps; i++) {
+        var u = i / steps;
+        var x = u * w;
+        var dx = u - ptr.x;
+        var dy = yRatio - ptr.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var repel = Math.exp(-dist * dist * 14) * (ptr.active ? 54 : 18) * (dy >= 0 ? 1 : -1);
+        var y = yRatio * h
+          + Math.sin(u * 4.2 + t * 0.9 + phase) * amp
+          + Math.cos(u * 2.1 - t * 0.55 + phase) * (amp * 0.45)
+          + repel;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = color;
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = width;
+      ctx.stroke();
+    }
+
+    function frame() {
+      t += 0.016;
+      ptr.x += (ptr.tx - ptr.x) * 0.07;
+      ptr.y += (ptr.ty - ptr.y) * 0.07;
+
+      ctx.clearRect(0, 0, w, h);
+
+      /* İpek kurdele / sayfa kıvrımı dalgaları */
+      drawRibbon(0.0, 0.34, 24, 0.22, "#C8312B", 1.35);
+      drawRibbon(0.9, 0.40, 18, 0.12, "#C8312B", 0.9);
+      drawRibbon(1.8, 0.68, 22, 0.11, "#111111", 1.0);
+      drawRibbon(2.6, 0.74, 15, 0.07, "#111111", 0.75);
+
+      /* Mürekkep zerreleri */
+      motes.forEach(function (m) {
+        m.x += m.vx + Math.sin(t * 0.6 + m.y * 6) * 0.00012;
+        m.y += m.vy;
+        if (m.y < -0.05) { m.y = 1.05; m.x = Math.random(); }
+        if (m.x < -0.05) m.x = 1.05;
+        if (m.x > 1.05) m.x = -0.05;
+
+        var px = m.x * w, py = m.y * h;
+        var dx = px - ptr.x * w, dy = py - ptr.y * h;
+        var d2 = dx * dx + dy * dy;
+        if (ptr.active && d2 < 22000 && d2 > 1) {
+          var f = (1 - d2 / 22000) * 1.6;
+          px += (dx / Math.sqrt(d2)) * f * 18;
+          py += (dy / Math.sqrt(d2)) * f * 18;
+        }
+        ctx.beginPath();
+        ctx.arc(px, py, m.r, 0, Math.PI * 2);
+        ctx.fillStyle = m.accent ? "#C8312B" : "#111111";
+        ctx.globalAlpha = m.accent ? 0.34 : 0.16;
+        ctx.fill();
+      });
+
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(frame);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    requestAnimationFrame(frame);
   }
 })();
