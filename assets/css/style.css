@@ -84,49 +84,30 @@ figcaption{font-size:13px;color:var(--muted);margin-top:8px}
   .main-nav a:last-child{border-bottom:0}
 }
 
-/* ---------- Giriş (Awwwards Tipografi + Akışkan Kanvas) ---------- */
+/* ---------- Giriş (Metinsiz Etkileşimli Editör Bakış Sahnesi) ---------- */
 .hero{padding-top:28px;overflow:hidden;display:flex;flex-direction:column;gap:20px}
 .hero-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 48px;font-size:14px}
 .hero-role{font-weight:600}
 .hero-lead{max-width:440px;color:var(--ink-2)}
 
-.stage{position:relative;min-height:clamp(380px,48vw,540px);display:grid;align-items:center;padding-block:clamp(16px,3vw,40px);
-  opacity:calc(1 - var(--past,0) * 1.15);transform:translateY(calc(var(--past,0) * 110px)) scale(calc(1 - var(--past,0) * .12))}
-.aw-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
-.aw-grid{position:relative;z-index:2;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 1fr;gap:clamp(24px,4vw,44px) 24px;align-items:end;width:100%}
-.aw-meta{grid-column:1 / -1;display:flex;align-items:center;gap:14px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-.aw-index{color:var(--accent)}
-.aw-rule{flex:1;height:1px;background:var(--line);transform-origin:left;transform:scaleX(0)}
-.fx .aw-rule{animation:aw-rule 1.2s cubic-bezier(.16,1,.3,1) 1.55s forwards}
-@keyframes aw-rule{to{transform:scaleX(1)}}
-.aw-coords{white-space:nowrap}
+.stage{position:relative;height:clamp(340px,46vw,500px);display:grid;place-items:center;cursor:crosshair;user-select:none;-webkit-tap-highlight-color:transparent;
+  opacity:calc(1 - var(--past,0) * 1.15);transform:translateY(calc(var(--past,0) * 110px)) scale(calc(1 - var(--past,0) * .14))}
+.aw-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1}
 
-.aw-center{display:flex;flex-direction:column;gap:clamp(10px,1.4vw,16px);max-width:920px}
-.aw-kicker{font-family:var(--serif);font-style:italic;font-size:clamp(20px,2.2vw,30px);line-height:1.2;color:var(--accent);opacity:0;transform:translateY(14px)}
-.fx .aw-kicker{animation:aw-up .9s cubic-bezier(.16,1,.3,1) 1.65s forwards}
-@keyframes aw-up{to{opacity:1;transform:none}}
+.aw-emblem{position:relative;z-index:2;pointer-events:none;perspective:900px;
+  transform:translate3d(var(--tx,0px), var(--ty,0px), 0) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform .25s var(--ease)}
+.aw-ribbon{width:clamp(54px,6vw,74px);height:clamp(84px,9.5vw,116px);background:var(--accent);color:var(--on-dark);
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 78.8%,0 100%);
+  display:flex;justify-content:center;padding-top:clamp(12px,1.5vw,18px);
+  box-shadow:0 24px 50px rgba(200,49,43,.28);
+  animation:aw-breathe 4.6s ease-in-out infinite}
+.aw-ribbon span{font-family:var(--serif);font-size:clamp(30px,3.6vw,44px);line-height:.9}
+@keyframes aw-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
-.aw-headline{font-family:var(--serif);font-size:clamp(42px,6.8vw,106px);line-height:.96;letter-spacing:-.025em;color:var(--ink)}
-.aw-mask{display:block;overflow:hidden;padding-bottom:.06em}
-.aw-mask > span{display:block;transform:translateY(112%) rotate(1.5deg);transform-origin:left bottom}
-.aw-mask em{font-style:italic;color:var(--accent);position:relative;display:inline-block}
-.fx .aw-mask:nth-child(1) > span{animation:aw-reveal 1.15s cubic-bezier(.16,1,.3,1) 1.72s forwards}
-.fx .aw-mask:nth-child(2) > span{animation:aw-reveal 1.15s cubic-bezier(.16,1,.3,1) 1.84s forwards}
-.fx .aw-mask:nth-child(3) > span{animation:aw-reveal 1.15s cubic-bezier(.16,1,.3,1) 1.96s forwards}
-@keyframes aw-reveal{to{transform:translateY(0) rotate(0deg)}}
-
-.aw-orbit{position:relative;width:128px;height:128px;display:grid;place-items:center;align-self:end;justify-self:end;opacity:0;transform:scale(.82)}
-.fx .aw-orbit{animation:aw-orbit-in 1s cubic-bezier(.16,1,.3,1) 2.05s forwards}
-@keyframes aw-orbit-in{to{opacity:1;transform:scale(1)}}
-.aw-crest{width:100%;height:100%;animation:aw-spin 24s linear infinite;will-change:transform}
-.aw-crest-text{font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.22em;fill:var(--ink-2);text-transform:uppercase}
-.aw-crest-mark{position:absolute;font-family:var(--serif);font-size:32px;line-height:1;color:var(--accent);transition:transform .4s cubic-bezier(.16,1,.3,1)}
-.aw-orbit:hover .aw-crest-mark{transform:scale(1.16) rotate(-6deg)}
-@keyframes aw-spin{to{transform:rotate(360deg)}}
-
-.aw-cursor{position:absolute;left:var(--cx,50%);top:var(--cy,50%);width:220px;height:220px;border-radius:50%;transform:translate(-50%,-50%);
-  background:radial-gradient(circle, rgba(200,49,43,.11) 0%, rgba(200,49,43,.03) 45%, transparent 72%);
-  pointer-events:none;z-index:1;opacity:0;transition:opacity .4s var(--ease)}
+.aw-cursor{position:absolute;left:var(--cx,50%);top:var(--cy,50%);width:180px;height:180px;border-radius:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle, rgba(200,49,43,.13) 0%, rgba(200,49,43,.03) 48%, transparent 72%);
+  pointer-events:none;z-index:0;opacity:0;transition:opacity .35s var(--ease)}
 .aw-stage:hover .aw-cursor{opacity:1}
 
 .hero-name{font-weight:600;font-size:clamp(40px,11.6vw,186px);line-height:.9;letter-spacing:-.045em;white-space:nowrap;text-align:center;margin-bottom:-.08em;transform:translateY(calc(var(--past,0) * 60px))}
@@ -134,12 +115,6 @@ figcaption{font-size:13px;color:var(--muted);margin-top:8px}
 .hero-name .ch{display:inline-block}
 .fx .hero-name .ch{animation:letter 1s var(--ease) both;animation-delay:calc(1.45s + var(--i) * 45ms)}
 @keyframes letter{from{opacity:0;transform:translateY(.6em) rotate(8deg)}to{opacity:1;transform:none}}
-@media (max-width:760px){
-  .aw-grid{grid-template-columns:1fr}
-  .aw-orbit{width:92px;height:92px;justify-self:start}
-  .aw-crest-mark{font-size:24px}
-  .aw-coords{display:none}
-}
 @media (max-width:640px){
   .hero-name{white-space:normal;font-size:19vw;line-height:.88;margin-bottom:.1em}
 }
@@ -349,9 +324,7 @@ figcaption{font-size:13px;color:var(--muted);margin-top:8px}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .intro{display:none}
-  .aw-crest,.tape-track{animation:none}
-  .aw-rule{transform:scaleX(1)}
-  .aw-kicker,.aw-orbit,.aw-mask > span{opacity:1;transform:none;animation:none}
+  .aw-ribbon,.tape-track{animation:none}
   .fx .hero-name .ch{animation:none}
 }
 

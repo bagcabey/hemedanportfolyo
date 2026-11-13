@@ -168,26 +168,33 @@
     dlg.addEventListener("close", function () { img.removeAttribute("src"); if (opener) opener.focus({ preventScroll: true }); });
   }
 
-  /* ---------- Awwwards Akışkan Editöryal Kanvas & İmleç Fiziği ---------- */
+  /* ---------- Metinsiz Etkileşimli Sahne: Sayfalar, Mürekkep & Kelebekler ---------- */
   var awStage = document.querySelector(".aw-stage");
   var awCanvas = document.querySelector(".aw-canvas");
+  var awEmblem = document.querySelector(".aw-emblem");
   if (awStage && awCanvas && !reduce) {
     var ctx = awCanvas.getContext("2d");
     var w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var ptr = { x: 0.55, y: 0.45, tx: 0.55, ty: 0.45, active: false };
+    var ptr = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5, active: false };
     var t = 0;
 
-    /* Yüzen editoryal mürekkep / sayfa parçacıkları */
-    var motes = Array.from({ length: 34 }, function (_, i) {
+    /* Origami kelebekler (tırtıldan kelebeğe) */
+    var butterflies = Array.from({ length: 14 }, function (_, i) {
       return {
         x: Math.random(),
         y: Math.random(),
-        r: 1.2 + (i % 4) * 0.7,
-        vx: (Math.random() - 0.5) * 0.00035,
-        vy: -0.00018 - Math.random() * 0.00028,
-        accent: i % 5 === 0
+        vx: (Math.random() - 0.5) * 0.002,
+        vy: (Math.random() - 0.5) * 0.002,
+        size: 7 + (i % 4) * 3,
+        phase: Math.random() * Math.PI * 2,
+        speed: 5 + Math.random() * 4,
+        crimson: i % 2 === 0
       };
     });
+
+    /* İmleç izi ve tıklama mürekkep halkaları */
+    var trail = [];
+    var ripples = [];
 
     function resizeCanvas() {
       var rect = awStage.getBoundingClientRect();
@@ -198,6 +205,25 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
+    function spawnBurst(nx, ny) {
+      ripples.push({ x: nx * w, y: ny * h, r: 6, alpha: 0.55 });
+      for (var i = 0; i < 6; i++) {
+        var ang = (Math.PI * 2 * i) / 6 + Math.random() * 0.5;
+        butterflies.push({
+          x: nx,
+          y: ny,
+          vx: Math.cos(ang) * 0.006,
+          vy: Math.sin(ang) * 0.006 - 0.002,
+          size: 8 + Math.random() * 6,
+          phase: Math.random() * Math.PI * 2,
+          speed: 8 + Math.random() * 4,
+          crimson: i % 2 === 0,
+          temp: true,
+          life: 1
+        });
+      }
+    }
+
     awStage.addEventListener("pointermove", function (e) {
       var rect = awStage.getBoundingClientRect();
       ptr.tx = (e.clientX - rect.left) / Math.max(1, rect.width);
@@ -205,67 +231,173 @@
       ptr.active = true;
       awStage.style.setProperty("--cx", (ptr.tx * 100).toFixed(1) + "%");
       awStage.style.setProperty("--cy", (ptr.ty * 100).toFixed(1) + "%");
-    });
-    awStage.addEventListener("pointerleave", function () { ptr.active = false; });
-
-    function drawRibbon(phase, yRatio, amp, alpha, color, width) {
-      ctx.beginPath();
-      var steps = 42;
-      for (var i = 0; i <= steps; i++) {
-        var u = i / steps;
-        var x = u * w;
-        var dx = u - ptr.x;
-        var dy = yRatio - ptr.y;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        var repel = Math.exp(-dist * dist * 14) * (ptr.active ? 54 : 18) * (dy >= 0 ? 1 : -1);
-        var y = yRatio * h
-          + Math.sin(u * 4.2 + t * 0.9 + phase) * amp
-          + Math.cos(u * 2.1 - t * 0.55 + phase) * (amp * 0.45)
-          + repel;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      if (awEmblem) {
+        awEmblem.style.setProperty("--tx", ((ptr.tx - 0.5) * 26).toFixed(1) + "px");
+        awEmblem.style.setProperty("--ty", ((ptr.ty - 0.5) * 18).toFixed(1) + "px");
+        awEmblem.style.setProperty("--rx", ((0.5 - ptr.ty) * 18).toFixed(1) + "deg");
+        awEmblem.style.setProperty("--ry", ((ptr.tx - 0.5) * 22).toFixed(1) + "deg");
       }
-      ctx.strokeStyle = color;
-      ctx.globalAlpha = alpha;
-      ctx.lineWidth = width;
-      ctx.stroke();
+      trail.push({ x: ptr.tx * w, y: ptr.ty * h, r: 2.2 + Math.random() * 2, alpha: 0.5 });
+      if (trail.length > 36) trail.shift();
+    });
+
+    awStage.addEventListener("pointerleave", function () {
+      ptr.active = false;
+      if (awEmblem) {
+        awEmblem.style.setProperty("--tx", "0px");
+        awEmblem.style.setProperty("--ty", "0px");
+        awEmblem.style.setProperty("--rx", "0deg");
+        awEmblem.style.setProperty("--ry", "0deg");
+      }
+    });
+
+    awStage.addEventListener("pointerdown", function (e) {
+      var rect = awStage.getBoundingClientRect();
+      var nx = (e.clientX - rect.left) / Math.max(1, rect.width);
+      var ny = (e.clientY - rect.top) / Math.max(1, rect.height);
+      spawnBurst(nx, ny);
+    });
+
+    function drawBookPages() {
+      var cx = w * 0.5, cy = h * 0.54;
+      var bookW = Math.min(w * 0.72, 620);
+      var bookH = Math.min(h * 0.62, 260);
+      var swayX = (ptr.x - 0.5) * 44;
+      var swayY = (ptr.y - 0.5) * 22;
+
+      for (var layer = 0; layer < 5; layer++) {
+        var p = layer / 4;
+        var lift = Math.sin(t * 1.1 + layer * 0.55) * 10 + swayY * (0.4 + p * 0.5);
+        var spread = bookW * (0.44 + p * 0.05);
+        var hOff = bookH * (0.42 - p * 0.03);
+
+        ctx.beginPath();
+        /* Sol sayfa kanadı */
+        ctx.moveTo(cx + swayX * 0.15, cy - hOff * 0.65);
+        ctx.bezierCurveTo(
+          cx - spread * 0.45, cy - hOff - lift * 0.6,
+          cx - spread * 0.85, cy - hOff * 0.4 + lift * 0.3,
+          cx - spread, cy + hOff * 0.55
+        );
+        ctx.bezierCurveTo(
+          cx - spread * 0.55, cy + hOff * 0.85 - lift * 0.25,
+          cx - spread * 0.2, cy + hOff * 0.45,
+          cx + swayX * 0.15, cy + hOff * 0.72
+        );
+        /* Sağ sayfa kanadı */
+        ctx.bezierCurveTo(
+          cx + spread * 0.2, cy + hOff * 0.45,
+          cx + spread * 0.55, cy + hOff * 0.85 + lift * 0.25,
+          cx + spread, cy + hOff * 0.55
+        );
+        ctx.bezierCurveTo(
+          cx + spread * 0.85, cy - hOff * 0.4 - lift * 0.3,
+          cx + spread * 0.45, cy - hOff + lift * 0.6,
+          cx + swayX * 0.15, cy - hOff * 0.65
+        );
+
+        ctx.fillStyle = layer === 0 ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.22)";
+        ctx.fill();
+        ctx.strokeStyle = layer === 4 ? "#C8312B" : "#111111";
+        ctx.globalAlpha = layer === 4 ? 0.38 : 0.12 + p * 0.06;
+        ctx.lineWidth = layer === 4 ? 1.5 : 1;
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function drawButterfly(b) {
+      var px = b.x * w, py = b.y * h;
+      var angle = Math.atan2(b.vy, b.vx) + Math.PI * 0.5;
+      var flap = 0.35 + Math.abs(Math.sin(t * b.speed + b.phase)) * 0.75;
+      var s = b.size;
+
+      ctx.save();
+      ctx.translate(px, py);
+      ctx.rotate(angle);
+      ctx.globalAlpha = (b.temp ? b.life : 1) * (b.crimson ? 0.78 : 0.48);
+      ctx.fillStyle = b.crimson ? "#C8312B" : "#111111";
+
+      /* Sol & sağ kanat */
+      for (var side = -1; side <= 1; side += 2) {
+        ctx.save();
+        ctx.scale(side * flap, 1);
+        ctx.beginPath();
+        ctx.moveTo(0, -s * 0.2);
+        ctx.bezierCurveTo(s * 0.95, -s * 1.05, s * 1.25, -s * 0.05, 0, s * 0.25);
+        ctx.bezierCurveTo(s * 0.85, s * 0.35, s * 0.65, s * 0.95, 0, s * 0.45);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+      ctx.restore();
     }
 
     function frame() {
-      t += 0.016;
-      ptr.x += (ptr.tx - ptr.x) * 0.07;
-      ptr.y += (ptr.ty - ptr.y) * 0.07;
+      t += 0.018;
+      ptr.x += (ptr.tx - ptr.x) * 0.08;
+      ptr.y += (ptr.ty - ptr.y) * 0.08;
 
       ctx.clearRect(0, 0, w, h);
 
-      /* İpek kurdele / sayfa kıvrımı dalgaları */
-      drawRibbon(0.0, 0.34, 24, 0.22, "#C8312B", 1.35);
-      drawRibbon(0.9, 0.40, 18, 0.12, "#C8312B", 0.9);
-      drawRibbon(1.8, 0.68, 22, 0.11, "#111111", 1.0);
-      drawRibbon(2.6, 0.74, 15, 0.07, "#111111", 0.75);
+      drawBookPages();
 
-      /* Mürekkep zerreleri */
-      motes.forEach(function (m) {
-        m.x += m.vx + Math.sin(t * 0.6 + m.y * 6) * 0.00012;
-        m.y += m.vy;
-        if (m.y < -0.05) { m.y = 1.05; m.x = Math.random(); }
-        if (m.x < -0.05) m.x = 1.05;
-        if (m.x > 1.05) m.x = -0.05;
-
-        var px = m.x * w, py = m.y * h;
-        var dx = px - ptr.x * w, dy = py - ptr.y * h;
-        var d2 = dx * dx + dy * dy;
-        if (ptr.active && d2 < 22000 && d2 > 1) {
-          var f = (1 - d2 / 22000) * 1.6;
-          px += (dx / Math.sqrt(d2)) * f * 18;
-          py += (dy / Math.sqrt(d2)) * f * 18;
-        }
+      /* Tıklama mürekkep halkaları */
+      for (var r = ripples.length - 1; r >= 0; r--) {
+        var rp = ripples[r];
+        rp.r += 4.2;
+        rp.alpha *= 0.95;
         ctx.beginPath();
-        ctx.arc(px, py, m.r, 0, Math.PI * 2);
-        ctx.fillStyle = m.accent ? "#C8312B" : "#111111";
-        ctx.globalAlpha = m.accent ? 0.34 : 0.16;
+        ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+        ctx.strokeStyle = "#C8312B";
+        ctx.globalAlpha = rp.alpha;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        if (rp.alpha < 0.02) ripples.splice(r, 1);
+      }
+
+      /* İmleç mürekkep tozu izi */
+      for (var tr = trail.length - 1; tr >= 0; tr--) {
+        var pt = trail[tr];
+        pt.alpha *= 0.92;
+        pt.y -= 0.4;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
+        ctx.fillStyle = "#C8312B";
+        ctx.globalAlpha = pt.alpha;
         ctx.fill();
-      });
+        if (pt.alpha < 0.02) trail.splice(tr, 1);
+      }
+
+      /* Kelebek fiziği */
+      for (var i = butterflies.length - 1; i >= 0; i--) {
+        var b = butterflies[i];
+        if (ptr.active) {
+          var dx = ptr.x - b.x, dy = ptr.y - b.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist > 0.04 && dist < 0.45) {
+            b.vx += (dx / dist) * 0.00018;
+            b.vy += (dy / dist) * 0.00018;
+          }
+        }
+        b.vx += (Math.sin(t * 0.9 + b.phase) * 0.00008);
+        b.vy += (Math.cos(t * 1.1 + b.phase) * 0.00006);
+        b.vx *= 0.985;
+        b.vy *= 0.985;
+        b.x += b.vx;
+        b.y += b.vy;
+
+        if (!b.temp) {
+          if (b.x < -0.05) b.x = 1.05;
+          if (b.x > 1.05) b.x = -0.05;
+          if (b.y < -0.05) b.y = 1.05;
+          if (b.y > 1.05) b.y = -0.05;
+        } else {
+          b.life -= 0.012;
+          if (b.life <= 0) { butterflies.splice(i, 1); continue; }
+        }
+        drawButterfly(b);
+      }
 
       ctx.globalAlpha = 1;
       requestAnimationFrame(frame);
