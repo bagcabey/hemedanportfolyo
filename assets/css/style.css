@@ -26,7 +26,11 @@
 /* ---------- Temel ---------- */
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:80px;-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip}
+/* Giriş hareketleri (settle, ch-title, şeritler) ekrana girmeden önce sağa taşar. Telefon tarayıcısı body'deki hidden'a rağmen
+   sayfayı bu taşma kadar genişletiyor ve sağda boşluk kalıyordu. İçerik kapları yatayda kırpılır; clip kaydırma kabı
+   oluşturmadığı için yapışkan bölümler çalışmaya devam eder. */
+main,.contact{overflow-x:clip}
 img{display:block;max-width:100%;height:auto}
 a{color:var(--accent)}a:hover{color:var(--ink)}
 p{margin:0}
